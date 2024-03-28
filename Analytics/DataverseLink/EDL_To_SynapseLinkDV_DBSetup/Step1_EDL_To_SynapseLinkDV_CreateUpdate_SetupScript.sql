@@ -987,6 +987,9 @@ BEGIN;
 	AND NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N''[{schema}].[{tablename}]'') AND type in (N''U'')) 
 	BEGIN
 
+	--Remove all the Soft-Deletion records in this context since no target table is existing before adding indexes and avoid recid violation index.		
+	DELETE FROM {schema}._new_{tablename} Where IsDelete = 1;
+		
 	print(''--_new_{tablename} exists and {tablename} does not exists ...rename the table --'')
 	exec sp_rename ''{schema}._new_{tablename}'', ''{tablename}''
  
